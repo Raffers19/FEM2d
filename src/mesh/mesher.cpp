@@ -1,5 +1,5 @@
 #include "vec2d.hpp"
-#include "mesh_funcs.hpp"
+#include "mesh/mesh_funcs.hpp"
 #include <vector>
 
 struct connect

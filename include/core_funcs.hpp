@@ -17,16 +17,30 @@ std::vector<double> linspace(const double min, const double max, const int nodes
     return space;
 }
 
-std::array<std::vector<std::vector<double>>,2> meshgrid(const std::vector<double>& x, const std::vector<double>& y)
+std::array<std::vector<std::vector<double>>, 2> meshgrid(const std::vector<double>& x, const std::vector<double>& y)
 {
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
     const int xsize = static_cast<int>(x.size());
     const int ysize = static_cast<int>(y.size());
 
-    std::vector<std::vector<double>> X(xsize, std::vector<double>(ysize));
-    std::vector<std::vector<double>> Y(ysize, std::vector<double>(xsize));
+    Matrix X(ysize, Vector(xsize));
+    Matrix Y(ysize, Vector(xsize));
 
-    
+    for (int i = 0; i < ysize; i++)
+    {
+        X[i] = x;
+    }
 
+    for (int i = 0; i < ysize; i++)
+    {
+        for (int j = 0; j < xsize; j++)
+        {
+            Y[i][j] = y[i];
+        }
+    }
+
+    return {std::move(X), std::move(Y)};
 }
-
 
