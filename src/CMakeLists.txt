@@ -2,6 +2,7 @@
 add_library(fem2d_lib STATIC
     mesh/mesh_funcs.cpp
     mesh/mesher.cpp
+    quadrature/quad_funcs.cpp
 )
 
 # Make public headers accessible

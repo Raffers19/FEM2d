@@ -40,7 +40,7 @@ void print(const std::vector<int>& x)
         //std::cout << std::setw(8) << x[i];
         std::cout << std::fixed
                   << std::setprecision(2)
-                  << std::setw(8)
+                  << std::setw(5)
                   << x[i];
     }
 

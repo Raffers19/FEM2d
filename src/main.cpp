@@ -1,8 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <array>
-//#include "core_funcs.hpp"
-//#include "mesh/mesh_funcs.hpp"
 #include "print.hpp"
 #include "mesh/mesher.hpp"
 
@@ -12,8 +10,8 @@ int main()
     using Vector = std::vector<double>;
     using Matrix = std::vector<Vector>;
 
-    int Nx = 3;
-    int Ny = 3;
+    int Nx = 5;
+    int Ny = 5;
     double minx = -1;
     double maxx = 1;
     double miny = -1;

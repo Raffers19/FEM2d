@@ -12,3 +12,6 @@ Release/
 
 # IDE files
 .vs/
+
+# VS Code local C++ configuration
+.vscode/
