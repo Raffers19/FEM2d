@@ -1,8 +1,9 @@
 #pragma once
 #include <vector>
 #include <array>
+#include <utility>
 
-std::vector<double> linspace(const double min, const double max, const int nodes)
+inline std::vector<double> linspace(const double min, const double max, const int nodes)
 {
     const double step = (max - min)/(nodes - 1);
     
@@ -17,7 +18,7 @@ std::vector<double> linspace(const double min, const double max, const int nodes
     return space;
 }
 
-std::array<std::vector<std::vector<double>>, 2> meshgrid(const std::vector<double>& x, const std::vector<double>& y)
+inline std::array<std::vector<std::vector<double>>, 2> meshgrid(const std::vector<double>& x, const std::vector<double>& y)
 {
     using Vector = std::vector<double>;
     using Matrix = std::vector<Vector>;

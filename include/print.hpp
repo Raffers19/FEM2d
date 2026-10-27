@@ -30,6 +30,23 @@ void print(const std::vector<double>& x)
     std::cout << '\n';
 }
 
+void print(const std::vector<int>& x)
+{
+    const int xsize = static_cast<int>(x.size());
+
+    for (int i = 0; i < xsize; i++)
+    {
+        //std::cout << x[i] << " ";
+        //std::cout << std::setw(8) << x[i];
+        std::cout << std::fixed
+                  << std::setprecision(2)
+                  << std::setw(8)
+                  << x[i];
+    }
+
+    std::cout << '\n';
+}
+
 void print(const std::vector<std::vector<double>>& X)
 {
     const int rows = static_cast<int>(X.size());

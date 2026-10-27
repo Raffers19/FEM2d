@@ -1,7 +1,7 @@
 #include "mesh/mesh_funcs.hpp"
 #include <vector>
 #include <array>
-//#include "core_funcs.hpp"
+#include "core_funcs.hpp"
 
 std::array<std::vector<double>, 2> gridToNode(const std::array<std::vector<std::vector<double>>, 2>& V)
 {
@@ -29,7 +29,7 @@ std::array<std::vector<double>, 2> gridToNode(const std::array<std::vector<std::
     return A;
 } 
 
-std::array<std::vector<int>, 3> getConnectivity(const int Nx, const int Ny)
+std::array<std::vector<int>, 3> constructConnectivity(const int Nx, const int Ny)
 {
     int squares = (Nx - 1)*(Ny - 1);
     int tn = 2*squares;
