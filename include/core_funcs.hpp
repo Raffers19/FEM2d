@@ -45,3 +45,23 @@ inline std::array<std::vector<std::vector<double>>, 2> meshgrid(const std::vecto
     return {std::move(X), std::move(Y)};
 }
 
+inline std::vector<double> ravel(const std::vector<std::vector<double>>& M)
+{
+    const int xsize = static_cast<int>(M[0].size());
+    const int ysize = static_cast<int>(M.size());
+    const int size = xsize*ysize;
+
+    std::vector<double> v(size);
+
+    for(int i=0; i<ysize; i++)
+    {
+        for(int j=0; j<xsize; j++)
+        {
+            v[j + xsize*i] = M[i][j];
+        }
+    }
+
+    return v;
+
+}
+

@@ -4,6 +4,8 @@
 #include "print.hpp"
 #include "mesh/mesher.hpp"
 
+#include "quadrature/quad_funcs.hpp"
+
 int main()
 {
     
@@ -16,19 +18,19 @@ int main()
     double maxx = 1;
     double miny = -1;
     double maxy = 1;
+    int order = 5;
 
     Mesher mesh(Nx, Ny, minx, miny, maxx, maxy);
 
     std::array<std::vector<double>, 2> nodes = mesh.getNodes();
-
-    print(nodes[0]);
-    print(nodes[1]);
-
     std::array<std::vector<int>, 3> con = mesh.getConnectivity();
 
-    print(con[0]);
-    print(con[1]);
-    print(con[2]);
+    std::vector<double> legnodes = legaussNodes(order);
+    std::vector<double> legweights = legaussWeights(legnodes);
+
+    print(legnodes);
+    print(legweights);
+
 
     return 0;
 }

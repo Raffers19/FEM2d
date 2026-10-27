@@ -1,5 +1,7 @@
 #include "quadrature/quad_funcs.hpp"
+#include "core_funcs.hpp"
 #include <vector>
+#include <array>
 #include <cmath>
 #include <numbers>
 
@@ -72,3 +74,43 @@ std::vector<double> legaussWeights(const std::vector<double>& nodes)
     return weights;
 }
 
+std::array<std::vector<double>, 2> duffyNodes(const std::vector<double>& nodes)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    std::array<Matrix, 2> V = meshgrid(nodes, nodes);
+    Vector xx = ravel(V[0]);
+    Vector y = ravel(V[1]);
+    Vector yy(y.size());
+
+    for(std::size_t i=0; i<y.size(); i++)
+    {
+        yy[i] = y[i]*(1 - xx[i]);
+    }
+
+    std::array<Vector, 2> D{xx, yy};
+
+    return D;
+}
+
+std::vector<double> duffyWeights(const std::vector<double>& nodes, const std::vector<double>& weights)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    std::array<Matrix, 2> V = meshgrid(nodes, nodes);
+    Vector xx = ravel(V[0]);
+
+    std::array<Matrix, 2> W = meshgrid(weights, weights);
+    Vector w1 = ravel(W[0]);
+    Vector w2 = ravel(W[1]);
+    Vector w(w1.size());
+
+    for(std::size_t i=0; i<xx.size(); i++)
+    {
+        w[i] = w1[i]*w2[i]*(1 - xx[i]);
+    }
+
+    return w;
+}
