@@ -86,7 +86,6 @@ inline std::vector<double> matmul(const std::vector<std::vector<double>>& A, con
 
 }
 
-
 inline std::vector<std::vector<double>> matmul(const std::vector<std::vector<double>>& A, const std::vector<std::vector<double>>& B)
 {
     using Vector = std::vector<double>;
@@ -295,3 +294,78 @@ inline double determinant(const std::vector<std::vector<double>>& A)
     return det;
 }
 
+inline double sum(const std::vector<double>& x)
+{
+    const int size = static_cast<int>(x.size());
+
+    double s{0.0};
+
+    for(int i=0; i<size; i++)
+    {
+        s += x[i];
+    }
+
+    return s;
+}
+
+inline double sum(const std::vector<std::vector<double>>& x)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    const int rows = static_cast<int>(x.size());
+    const int cols = static_cast<int>(x[0].size());
+
+    double s{0.0};
+
+    for(int i=0; i<rows; i++)
+    {
+        for(int j=0; j<cols; j++)
+        {
+            s += x[i][j];
+        }
+    }
+    return s;
+}
+
+inline std::vector<double> sum(const std::vector<std::vector<double>>& x, int axis)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    const int rows = static_cast<int>(x.size());
+    const int cols = static_cast<int>(x[0].size());
+
+    if(axis==0)
+    {
+
+    }else if(axis==1)
+    {
+
+    }
+}
+
+inline std::vector<double> dot(const std::vector<std::vector<double>>& x, const std::vector<std::vector<double>>& y)
+{
+
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    const int rows = static_cast<int>(x.size());
+    const int cols = static_cast<int>(x[0].size());
+
+    Matrix full(rows, Vector(cols));
+
+    for(int i=0; i<rows; i++)
+    {
+        for(int j=0; j<cols; j++)
+        {
+            full[i][j] = x[i][j]*y[i][j];
+        }
+    }
+
+
+
+
+    
+}
