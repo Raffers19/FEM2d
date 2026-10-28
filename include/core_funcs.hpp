@@ -65,3 +65,51 @@ inline std::vector<double> ravel(const std::vector<std::vector<double>>& M)
 
 }
 
+inline std::vector<double> matmul(const std::vector<std::vector<double>>& A, const std::vector<double> x)
+{
+
+    const int cols = static_cast<int>(A[0].size());
+    const int rows = static_cast<int>(A.size());
+
+    std::vector<double> b(rows, 0.0);
+
+    for(int i=0; i<rows; i++) 
+    {
+        for(int j=0; j<cols; j++)
+        {
+            b[i] += A[i][j]*x[j];
+        } 
+    }
+
+    return b;
+
+}
+
+
+inline std::vector<std::vector<double>> matmul(const std::vector<std::vector<double>>& A, const std::vector<std::vector<double>>& B)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    const int Acols = static_cast<int>(A[0].size());
+    const int Arows = static_cast<int>(A.size());
+
+    const int Bcols = static_cast<int>(B[0].size());
+    const int Brows = static_cast<int>(B.size());
+
+    Matrix C(Arows, Vector(Bcols, 0.0));
+
+    for (int i = 0; i < Arows; i++)
+    {
+        for (int j = 0; j < Bcols; j++)
+        {
+            for (int k = 0; k < Acols; k++)
+            {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+
+    return C;
+}
+
