@@ -8,3 +8,5 @@ std::vector<double> legaussWeights(const std::vector<double>& nodes);
 std::array<std::vector<double>, 2> duffyNodes(const std::vector<double>& nodes);
 std::vector<double> duffyWeights(const std::vector<double>& nodes, const std::vector<double>& weights);
 std::vector<std::vector<double>> transformMatrix(const double x1, const double x2, const double x3, const double y1, const double y2, const double y3);
+std::array<std::vector<double>, 2> affineNodes(const std::array<std::vector<double>, 2>& refnodes, const double x1, const double x2, const double x3, const double y1, const double y2, const double y3);
+std::vector<std::vector<double>> lagrangeBasis(const std::vector<double>& x, const std::vector<double>& y, int p);

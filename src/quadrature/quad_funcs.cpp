@@ -130,3 +130,78 @@ std::vector<std::vector<double>> transformMatrix(const double x1, const double x
     return B;
 }
 
+std::array<std::vector<double>, 2> affineNodes(const std::array<std::vector<double>, 2>& refnodes, const double x1, const double x2, const double x3, const double y1, const double y2, const double y3)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    Matrix B = transformMatrix(x1, x2, x3, y1, y2, y3);
+
+    Matrix x(2, Vector(refnodes[0].size()));
+    x[0] = refnodes[0];
+    x[1] = refnodes[1];
+
+    Matrix aff = matmul(B, x);
+
+    for(int j=0; j<refnodes[0].size(); j++)
+    {
+        aff[0][j] += x3;
+        aff[1][j] += y3;
+    }
+    
+    std::array<std::vector<double>, 2> affnodes{aff[0], aff[1]};
+
+    return affnodes;
+}
+
+std::vector<std::vector<double>> lagrangeBasis(const std::vector<double>& x, const std::vector<double>& y, int p)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    const std::size_t Nq = x.size();
+    const std::size_t Np = (static_cast<std::size_t>(p) + 1) * (p + 2) / 2;
+
+    Matrix L(Np, Vector(Nq, 0.0));
+
+    // Evaluate the barycentric Lagrange polynomials
+    std::size_t row = 0;
+
+    for (int i = 0; i <= p; i++)
+    {
+        for (int j = 0; j <= p - i; j++)
+        {
+            const int k = p - i - j;
+
+            for (std::size_t q = 0; q < Nq; q++)
+            {
+                const double lambda1 = 1.0 - x[q] - y[q];
+                const double lambda2 = x[q];
+                const double lambda3 = y[q];
+
+                double value = 1.0;
+
+                for (int a = 0; a < i; a++)
+                {
+                    value *= (p * lambda1 - a) / (a + 1);
+                }
+
+                for (int b = 0; b < j; b++)
+                {
+                    value *= (p * lambda2 - b) / (b + 1);
+                }
+
+                for (int c = 0; c < k; c++)
+                {
+                    value *= (p * lambda3 - c) / (c + 1);
+                }
+
+                L[row][q] = value;
+            }
+
+            row++;
+        }
+    }
+
+    return L;
+}
