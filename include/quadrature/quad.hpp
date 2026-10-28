@@ -5,8 +5,6 @@
 class Quadrature
 {
 private:
-    std::array<std::vector<double>, 2> nodes;
-    std::array<std::vector<int>, 3> con;
     int order;
     std::array<std::vector<double>, 2> refNodes;
     std::vector<double> refWeights;
@@ -15,7 +13,7 @@ private:
 
 
 public:
-    Quadrature(const std::array<std::vector<double>, 2>& nodal_array, const std::array<std::vector<int>, 3>& connectivity, int quadOrder);
+    Quadrature(int quadOrder);
 };
 
 

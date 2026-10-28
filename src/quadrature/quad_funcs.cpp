@@ -154,7 +154,7 @@ std::array<std::vector<double>, 2> affineNodes(const std::array<std::vector<doub
     return affnodes;
 }
 
-std::vector<std::vector<double>> lagrangeBasis(const std::vector<double>& x, const std::vector<double>& y, int p)
+std::vector<std::vector<double>> lagrangeBasisFuncs(const std::vector<double>& x, const std::vector<double>& y, int p)
 {
     using Vector = std::vector<double>;
     using Matrix = std::vector<Vector>;
@@ -204,4 +204,87 @@ std::vector<std::vector<double>> lagrangeBasis(const std::vector<double>& x, con
     }
 
     return L;
+}
+
+std::vector<std::array<std::vector<double>, 2>> lagrangeGradientFuncs(const std::vector<double>& x, const std::vector<double>& y, int p)
+{
+    using Vector = std::vector<double>;
+    using Gradient = std::array<Vector, 2>;
+
+    const std::size_t Nq = x.size();
+    const std::size_t Np =
+        (static_cast<std::size_t>(p) + 1) * (p + 2) / 2;
+
+    std::vector<Gradient> grad(
+        Np, Gradient{Vector(Nq, 0.0), Vector(Nq, 0.0)}
+    );
+
+    // Evaluate a 1D barycentric polynomial factor
+    // and its derivative.
+    auto factor = [p](double lambda, int degree)
+        -> std::array<double, 2>
+    {
+        double value = 1.0;
+        double derivative = 0.0;
+
+        for (int a = 0; a < degree; a++)
+        {
+            const double f =
+                (p * lambda - a) / (a + 1);
+
+            const double df =
+                static_cast<double>(p) / (a + 1);
+
+            // Product rule
+            derivative = derivative*f + value*df;
+            value *= f;
+        }
+
+        return {value, derivative};
+    };
+
+    std::size_t row = 0;
+
+    for (int i = 0; i <= p; i++)
+    {
+        for (int j = 0; j <= p - i; j++)
+        {
+            const int k = p - i - j;
+
+            for (std::size_t q = 0; q < Nq; q++)
+            {
+                const double lambda1 = 1.0 - x[q] - y[q];
+                const double lambda2 = x[q];
+                const double lambda3 = y[q];
+
+                const auto F1 = factor(lambda1, i);
+                const auto F2 = factor(lambda2, j);
+                const auto F3 = factor(lambda3, k);
+
+                const double dLdlambda1 =
+                    F1[1] * F2[0] * F3[0];
+
+                const double dLdlambda2 =
+                    F1[0] * F2[1] * F3[0];
+
+                const double dLdlambda3 =
+                    F1[0] * F2[0] * F3[1];
+
+                // Chain rule:
+                // lambda1 = 1 - x - y
+                // lambda2 = x
+                // lambda3 = y
+
+                grad[row][0][q] =
+                    -dLdlambda1 + dLdlambda2;
+
+                grad[row][1][q] =
+                    -dLdlambda1 + dLdlambda3;
+            }
+
+            row++;
+        }
+    }
+
+    return grad;
 }

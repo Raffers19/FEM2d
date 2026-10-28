@@ -4,8 +4,8 @@
 #include <vector>
 #include <array>
 
-Quadrature::Quadrature(const std::array<std::vector<double>, 2>& nodal_array, const std::array<std::vector<int>, 3>& connectivity, int quadOrder)
-    : nodes{nodal_array}, con{connectivity}, order{quadOrder}
+Quadrature::Quadrature(int quadOrder)
+    : order{quadOrder}
 {
     using Vector = std::vector<double>;
     using Matrix = std::vector<Vector>;
