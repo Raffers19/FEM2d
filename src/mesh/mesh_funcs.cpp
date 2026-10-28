@@ -72,24 +72,4 @@ std::array<std::vector<int>, 3> constructConnectivity(const int Nx, const int Ny
     return con;
 }
 
-inline std::vector<std::vector<double>> transpose(const std::vector<std::vector<double>>& A)
-{
-    using Vector = std::vector<double>;
-    using Matrix = std::vector<Vector>;
 
-    const std::size_t rows = A.size();
-    const std::size_t cols = A[0].size();
-
-    Matrix B(cols, Vector(rows));
-
-    for (std::size_t i = 0; i < rows; i++)
-    {
-
-        for (std::size_t j = 0; j < cols; j++)
-        {
-            B[j][i] = A[i][j];
-        }
-    }
-
-    return B;
-}

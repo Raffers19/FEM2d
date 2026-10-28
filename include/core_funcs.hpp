@@ -2,6 +2,7 @@
 #include <vector>
 #include <array>
 #include <utility>
+#include <stdexcept>
 
 inline std::vector<double> linspace(const double min, const double max, const int nodes)
 {
@@ -111,5 +112,186 @@ inline std::vector<std::vector<double>> matmul(const std::vector<std::vector<dou
     }
 
     return C;
+}
+
+inline std::vector<std::vector<double>> inverse(const std::vector<std::vector<double>>& A)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    const std::size_t n = A.size();
+
+    for (const auto& row : A)
+    {
+        if (row.size() != n)
+        {
+            throw std::invalid_argument("Matrix must be square");
+        }
+    }
+
+    // Copy A and initialize the identity matrix
+    Matrix M = A;
+    Matrix B(n, Vector(n, 0.0));
+
+    for (std::size_t i = 0; i < n; i++)
+    {
+        B[i][i] = 1.0;
+    }
+
+    // Gauss-Jordan elimination
+    for (std::size_t i = 0; i < n; i++)
+    {
+        // Find the row with the largest pivot
+        std::size_t pivot = i;
+
+        for (std::size_t j = i + 1; j < n; j++)
+        {
+            if (std::abs(M[j][i]) > std::abs(M[pivot][i]))
+            {
+                pivot = j;
+            }
+        }
+
+        // Check for singularity
+        if (std::abs(M[pivot][i]) <=
+            std::numeric_limits<double>::epsilon())
+        {
+            throw std::runtime_error("Matrix is singular or nearly singular");
+        }
+
+        // Swap rows
+        std::swap(M[i], M[pivot]);
+        std::swap(B[i], B[pivot]);
+
+        // Normalize pivot row
+        const double pivotValue = M[i][i];
+
+        for (std::size_t j = 0; j < n; j++)
+        {
+            M[i][j] /= pivotValue;
+            B[i][j] /= pivotValue;
+        }
+
+        // Eliminate all other entries in column i
+        for (std::size_t k = 0; k < n; k++)
+        {
+            if (k == i)
+            {
+                continue;
+            }
+
+            const double factor = M[k][i];
+
+            for (std::size_t j = 0; j < n; j++)
+            {
+                M[k][j] -= factor * M[i][j];
+                B[k][j] -= factor * B[i][j];
+            }
+        }
+    }
+
+    return B;
+}
+
+inline std::vector<std::vector<double>> transpose(const std::vector<std::vector<double>>& A)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    const std::size_t rows = A.size();
+    const std::size_t cols = A[0].size();
+
+    Matrix B(cols, Vector(rows));
+
+    for (std::size_t i = 0; i < rows; i++)
+    {
+
+        for (std::size_t j = 0; j < cols; j++)
+        {
+            B[j][i] = A[i][j];
+        }
+    }
+
+    return B;
+}
+
+inline std::vector<std::vector<double>> transinv(const std::vector<std::vector<double>>& A)
+{
+    std::vector<std::vector<double>> T = transpose(A);
+    std::vector<std::vector<double>> IT = inverse(T);  
+
+    return IT;
+}
+
+inline double determinant(const std::vector<std::vector<double>>& A)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    const std::size_t n = A.size();
+
+    if (n == 0)
+    {
+        throw std::invalid_argument("Matrix is empty");
+    }
+
+    for (const auto& row : A)
+    {
+        if (row.size() != n)
+        {
+            throw std::invalid_argument("Matrix must be square");
+        }
+    }
+
+    // Copy the matrix to avoid modifying A
+    Matrix M = A;
+
+    double det = 1.0;
+
+    for (std::size_t i = 0; i < n; i++)
+    {
+        // Find the largest pivot in column i
+        std::size_t pivot = i;
+
+        for (std::size_t j = i + 1; j < n; j++)
+        {
+            if (std::abs(M[j][i]) > std::abs(M[pivot][i]))
+            {
+                pivot = j;
+            }
+        }
+
+        // A zero pivot means the matrix is singular
+        if (M[pivot][i] == 0.0)
+        {
+            return 0.0;
+        }
+
+        // Swap rows if necessary
+        if (pivot != i)
+        {
+            std::swap(M[i], M[pivot]);
+            det = -det;
+        }
+
+        const double pivotValue = M[i][i];
+
+        det *= pivotValue;
+
+        // Eliminate entries below the pivot
+        for (std::size_t j = i + 1; j < n; j++)
+        {
+            const double factor = M[j][i] / pivotValue;
+
+            for (std::size_t k = i + 1; k < n; k++)
+            {
+                M[j][k] -= factor * M[i][k];
+            }
+
+            M[j][i] = 0.0;
+        }
+    }
+
+    return det;
 }
 

@@ -114,3 +114,19 @@ std::vector<double> duffyWeights(const std::vector<double>& nodes, const std::ve
 
     return w;
 }
+
+std::vector<std::vector<double>> transformMatrix(const double x1, const double x2, const double x3, const double y1, const double y2, const double y3)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    Matrix B(2, Vector(2));
+
+    B[0][0] = x1 - x3;
+    B[0][1] = x2 - x3;
+    B[1][0] = y1 - y3;
+    B[1][1] = y2 - y3;
+
+    return B;
+}
+
