@@ -130,7 +130,7 @@ std::vector<std::vector<double>> transformMatrix(const double x1, const double x
     return B;
 }
 
-std::array<std::vector<double>, 2> affineNodes(const std::array<std::vector<double>, 2>& refnodes, const std::vector<std::vector<double>>& B)
+std::array<std::vector<double>, 2> affineNodes(const std::array<std::vector<double>, 2>& refnodes, const std::vector<std::vector<double>>& B, const double x3, const double y3)
 {
     using Vector = std::vector<double>;
     using Matrix = std::vector<Vector>;
@@ -204,18 +204,31 @@ std::vector<std::vector<double>> lagrangeBasisFuncs(const std::vector<double>& x
     return L;
 }
 
-std::vector<std::array<std::vector<double>, 2>> lagrangeGradientFuncs(const std::vector<double>& x, const std::vector<double>& y, int p)
+std::vector<std::vector<std::vector<double>>> lagrangeGradientFuncs(const std::vector<double>& x, const std::vector<double>& y, int p)
 {
     using Vector = std::vector<double>;
-    using Gradient = std::array<Vector, 2>;
+    using Matrix = std::vector<Vector>;
+    using Tensor = std::vector<Matrix>;
+
+    if (p < 0)
+    {
+        throw std::invalid_argument(
+            "Polynomial degree must be nonnegative"
+        );
+    }
+
+    if (x.size() != y.size())
+    {
+        throw std::invalid_argument(
+            "x and y must have the same size"
+        );
+    }
 
     const std::size_t Nq = x.size();
     const std::size_t Np =
         (static_cast<std::size_t>(p) + 1) * (p + 2) / 2;
 
-    std::vector<Gradient> grad(
-        Np, Gradient{Vector(Nq, 0.0), Vector(Nq, 0.0)}
-    );
+    Tensor grad(Np, Matrix(2, Vector(Nq, 0.0)));
 
     // Evaluate a 1D barycentric polynomial factor
     // and its derivative.
@@ -268,11 +281,7 @@ std::vector<std::array<std::vector<double>, 2>> lagrangeGradientFuncs(const std:
                 const double dLdlambda3 =
                     F1[0] * F2[0] * F3[1];
 
-                // Chain rule:
-                // lambda1 = 1 - x - y
-                // lambda2 = x
-                // lambda3 = y
-
+                // Chain rule
                 grad[row][0][q] =
                     -dLdlambda1 + dLdlambda2;
 
@@ -287,7 +296,8 @@ std::vector<std::array<std::vector<double>, 2>> lagrangeGradientFuncs(const std:
     return grad;
 }
 
-std::vector<std::vector<double>> computeLocalStiff(const int p, std::array<std::vector<double>, 2> refnodes, const double x1, const double x2, const double x3, const double y1, const double y2, const double y3)
+std::vector<std::vector<double>> computeLocalStiff(const int p, const std::array<std::vector<double>, 2>& refnodes, const std::vector<double>& refweights, 
+    const double x1, const double x2, const double x3, const double y1, const double y2, const double y3)
 {
     using Vector = std::vector<double>;
     using Matrix = std::vector<Vector>;
@@ -296,8 +306,8 @@ std::vector<std::vector<double>> computeLocalStiff(const int p, std::array<std::
     Matrix BT = transpose(B);
     double det = determinant(BT);
     Matrix invBT = inverse(BT);
-    std::array<Vector, 2> affnodes = affineNodes(refnodes, B);
-    std::vector<std::array<Vector, 2>> phi = lagrangeGradientFuncs(affnodes[0], affnodes[1], p);
+    //std::array<Vector, 2> affnodes = affineNodes(refnodes, B, x3, y3);
+    std::vector<std::vector<Vector>> phi = lagrangeGradientFuncs(refnodes[0], refnodes[1], p);
 
     const std::size_t b = phi.size();
     const std::size_t n2 = phi[0][0].size();
@@ -308,14 +318,22 @@ std::vector<std::vector<double>> computeLocalStiff(const int p, std::array<std::
     {
         for(int j=0; j<b; j++)
         {
-            
+            Matrix a = matmul(invBT, phi[i]);
+            Matrix b = matmul(invBT, phi[j]);
+
+            Vector u = dot(a, b);
+
+            for(int k=0; k<u.size(); k++)
+            {
+                u[k] = u[k]*std::abs(det)*refweights[k];   
+            }
+
+            local[i][j] = sum(u);
         }
+
+        
     }
 
-
-
-
-
-
+    return local;
 
 }

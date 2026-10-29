@@ -3,6 +3,8 @@
 #include <array>
 #include <utility>
 #include <stdexcept>
+#include <cmath>   
+#include <limits>  
 
 inline std::vector<double> linspace(const double min, const double max, const int nodes)
 {
@@ -66,7 +68,7 @@ inline std::vector<double> ravel(const std::vector<std::vector<double>>& M)
 
 }
 
-inline std::vector<double> matmul(const std::vector<std::vector<double>>& A, const std::vector<double> x)
+inline std::vector<double> matmul(const std::vector<std::vector<double>>& A, const std::vector<double>& x)
 {
 
     const int cols = static_cast<int>(A[0].size());
