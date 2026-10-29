@@ -17,5 +17,10 @@ Quadrature::Quadrature(int quadOrder)
     refWeights = duffyWeights(nodes1d, weights1d);
 }
 
+std::vector<std::vector<double>> Quadrature::getLocalStiff(double x1,double x2,double x3,double y1,double y2,double y3, int p) const
+{
+    std::vector<std::vector<double>> L = computeLocalStiff(p, refNodes, refWeights, x1, x2, x3, y1, y2, y3);
+    return L;
+}
 
 
