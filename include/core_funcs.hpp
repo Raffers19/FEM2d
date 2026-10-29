@@ -336,13 +336,46 @@ inline std::vector<double> sum(const std::vector<std::vector<double>>& x, int ax
     const int rows = static_cast<int>(x.size());
     const int cols = static_cast<int>(x[0].size());
 
+    Vector s;
+
     if(axis==0)
     {
+        s.resize(cols);    
+        
+        for(int i=0; i<cols; i++)
+        {
+            for(int j=0; j<rows; j++)
+            {
+                s[i] += x[j][i]; 
+            }
+        }
 
     }else if(axis==1)
     {
+        s.resize(rows); 
+        
+        for(int i=0; i<rows; i++)
+        {
+            s[i] = sum(x[i]);
+        }
 
     }
+
+    return s;
+}
+
+inline double dot(const std::vector<double>& x, const std::vector<double>& y)
+{
+    const int len = static_cast<int>(x.size());
+
+    double s{0.0};
+
+    for(int i=0; i<len; i++)
+    {
+        s += x[i]*y[i];
+    }
+
+    return s;
 }
 
 inline std::vector<double> dot(const std::vector<std::vector<double>>& x, const std::vector<std::vector<double>>& y)
@@ -364,8 +397,6 @@ inline std::vector<double> dot(const std::vector<std::vector<double>>& x, const 
         }
     }
 
-
-
-
-    
+    Vector dotprod = sum(full, 0);
+    return dotprod;    
 }
