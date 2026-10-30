@@ -3,8 +3,12 @@
 #include <array>
 #include "print.hpp"
 #include "mesh/mesher.hpp"
+#include "assembley/assembler.hpp"
 
-#include "quadrature/quad_funcs.hpp"
+double func(const double x, const double y)
+{
+    return x*x + y*y - 0.4*0.4;
+}
 
 int main()
 {
@@ -12,24 +16,29 @@ int main()
     using Vector = std::vector<double>;
     using Matrix = std::vector<Vector>;
 
-    int Nx = 5;
-    int Ny = 5;
+    int Nx = 3;
+    int Ny = 3;
     double minx = -1;
     double maxx = 1;
     double miny = -1;
     double maxy = 1;
-    int order = 5;
+    //int order = 5;
 
     Mesher mesh(Nx, Ny, minx, miny, maxx, maxy);
 
     std::array<std::vector<double>, 2> nodes = mesh.getNodes();
     std::array<std::vector<int>, 3> con = mesh.getConnectivity();
+    std::vector<int> bc = mesh.getBoundary();
 
-    std::vector<double> legnodes = legaussNodes(order);
-    std::vector<double> legweights = legaussWeights(legnodes);
+    Assembler assembler(nodes, con);
 
-    print(legnodes);
-    print(legweights);
+    Matrix A = assembler.poissonStiffnessP1();
+    A = assembler.boundaryDirichletH(A, bc);
+
+
+    //print(bc);
+
+    
 
 
     return 0;
