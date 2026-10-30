@@ -14,3 +14,7 @@ std::vector<std::vector<double>> lagrangeBasisFuncs(const std::vector<double>& x
 std::vector<std::vector<std::vector<double>>> lagrangeGradientFuncs(const std::vector<double>& x, const std::vector<double>& y, int p);
 std::vector<std::vector<double>> computeLocalStiff(const int p, const std::array<std::vector<double>, 2>& refnodes, const std::vector<double>& refweights, 
     const double x1, const double x2, const double x3, const double y1, const double y2, const double y3);
+
+template<typename Func>
+std::vector<double> computeLocalSource(Func f, const int p, const std::array<std::vector<double>, 2>& refnodes, const std::vector<double>& refweights, 
+    const double x1, const double x2, const double x3, const double y1, const double y2, const double y3);

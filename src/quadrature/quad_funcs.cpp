@@ -306,11 +306,10 @@ std::vector<std::vector<double>> computeLocalStiff(const int p, const std::array
     Matrix BT = transpose(B);
     double det = determinant(BT);
     Matrix invBT = inverse(BT);
-    //std::array<Vector, 2> affnodes = affineNodes(refnodes, B, x3, y3);
-    std::vector<std::vector<Vector>> phi = lagrangeGradientFuncs(refnodes[0], refnodes[1], p);
+    std::vector<std::vector<Vector>> dphi = lagrangeGradientFuncs(refnodes[0], refnodes[1], p);
 
-    const std::size_t b = phi.size();
-    const std::size_t n2 = phi[0][0].size();
+    const std::size_t b = dphi.size();
+    const std::size_t n2 = dphi[0][0].size();
 
     Matrix local(b, Vector(b));
 
@@ -318,8 +317,8 @@ std::vector<std::vector<double>> computeLocalStiff(const int p, const std::array
     {
         for(int j=0; j<b; j++)
         {
-            Matrix a = matmul(invBT, phi[i]);
-            Matrix b = matmul(invBT, phi[j]);
+            Matrix a = matmul(invBT, dphi[i]);
+            Matrix b = matmul(invBT, dphi[j]);
 
             Vector u = dot(a, b);
 
@@ -335,5 +334,42 @@ std::vector<std::vector<double>> computeLocalStiff(const int p, const std::array
     }
 
     return local;
+
+}
+
+template<typename Func>
+std::vector<double> computeLocalSource(Func func, const int p, const std::array<std::vector<double>, 2>& refnodes, const std::vector<double>& refweights, 
+    const double x1, const double x2, const double x3, const double y1, const double y2, const double y3)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    Matrix B = transformMatrix(x1, x2, x3, y1, y2, y3);
+    std::array<Vector, 2> affnodes = affineNodes(refnodes, B, x3, y3);
+    double det = std::abs(determinant(B));
+
+    Matrix phi = lagrangeBasisFuncs(refnodes[0], refnodes[1], p);
+
+    int n2 = static_cast<int>(affnodes[0].size());
+    int b = static_cast<int>(phi.size());
+
+    double f;
+    Vector l(b);
+    Vector presum(n2);
+
+    for(int i=0; i<b; i++)
+    {
+        
+        for(int j=0; j<n2; j++)
+        {
+            f = func(affnodes[0][j], affnodes[1][j]);
+            presum[j] = f*phi[i][j]*refweights[j]*det;
+        }
+
+        l[i] = sum(presum);
+
+    }
+
+    return l;
 
 }
