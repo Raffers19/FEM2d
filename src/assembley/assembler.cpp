@@ -1,5 +1,6 @@
 #include "assembley/assembler.hpp"
 #include "quadrature/quad.hpp"
+#include "core_funcs.hpp"
 
 Assembler::Assembler(const std::array<std::vector<double>, 2> nodalArray, std::array<std::vector<int>, 3> connectivityArray)
     : nodes{nodalArray}, con{connectivityArray}
@@ -7,7 +8,7 @@ Assembler::Assembler(const std::array<std::vector<double>, 2> nodalArray, std::a
 
 }
 
-std::vector<std::vector<double>> Assembler::poissonStiffness1d()
+std::vector<std::vector<double>> Assembler::poissonStiffnessP1()
 {
 
     int p = 1;
@@ -20,21 +21,36 @@ std::vector<std::vector<double>> Assembler::poissonStiffness1d()
 
 
     int tt = static_cast<int>(con[0].size()); 
-    int bn = ((p + 1)*(p + 2))/2;
+    int bn = static_cast<int>(nodes[0].size());
 
     Matrix A(bn, Vector(bn));
 
-    for(int i=0; i<tt; i++)
+    for (int n = 0; n < tt; n++)
     {
-        double x1 = nodes[0][con[0][i]];
-        double x2 = nodes[0][con[1][i]];
-        double x3 = nodes[0][con[2][i]];
-        double y1 = nodes[1][con[0][i]];
-        double y2 = nodes[1][con[1][i]];
-        double y3 = nodes[1][con[2][i]];
+        const std::array<int, 3> tcon{con[0][n], con[1][n], con[2][n]};
 
-        Matrix L = quad.getLocalStiff(x1, x2, x3, y1, y2, y3, p);
+        const double x1 = nodes[0][tcon[0]];
+        const double x2 = nodes[0][tcon[1]];
+        const double x3 = nodes[0][tcon[2]];
+        const double y1 = nodes[1][tcon[0]];
+        const double y2 = nodes[1][tcon[1]];
+        const double y3 = nodes[1][tcon[2]];
+
+        const Matrix L = quad.getLocalStiff(x1, x2, x3, y1, y2, y3, p);
+
+        // Your local basis is ordered by vertices 2, 1, 3.
+        const std::array<int, 3> dof{tcon[1], tcon[0], tcon[2]};
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                A[dof[i]][dof[j]] += L[i][j];
+            }
+        }
     }
+
+    return A;
 
 
 }
