@@ -402,3 +402,22 @@ inline std::vector<double> dot(const std::vector<std::vector<double>>& x, const 
     Vector dotprod = sum(full, 0);
     return dotprod;    
 }
+
+inline double mean(const std::vector<double>& x)
+{
+    int n = static_cast<int>(x.size());
+
+    double s = 0;
+
+    for(int i=0; i<n; i++)
+    {
+        s += x[i];
+    }
+
+    return s/n;
+}
+
+inline double triArea(double x1, double x2, double x3, double y1, double y2, double y3)
+{
+    return 0.5 * std::abs((x1 - x3)*(y2 - y3) - (x2 - x3)*(y1 - y3));
+}
