@@ -72,9 +72,9 @@ std::vector<std::vector<double>> boundaryDirichletH(const std::vector<std::vecto
     return D;
 }
 
-std::vector<double> boundaryDirichletH(const std::vector<double>& F, const std::vector<int>& bnodes)+
+std::vector<double> boundaryDirichletH(const std::vector<double>& F, const std::vector<int>& bnodes)
 {
-    int sizeA = static_cast<int>(F.size());
+    //int sizeA = static_cast<int>(F.size());
     int sizebc = static_cast<int>(bnodes.size());
 
     std::vector<double> D = F;

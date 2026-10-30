@@ -97,7 +97,7 @@ inline std::vector<std::vector<double>> matmul(const std::vector<std::vector<dou
     const int Arows = static_cast<int>(A.size());
 
     const int Bcols = static_cast<int>(B[0].size());
-    const int Brows = static_cast<int>(B.size());
+    //const int Brows = static_cast<int>(B.size());
 
     Matrix C(Arows, Vector(Bcols, 0.0));
 

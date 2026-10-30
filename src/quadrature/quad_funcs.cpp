@@ -309,7 +309,7 @@ std::vector<std::vector<double>> computeLocalStiff(const int p, const std::array
     std::vector<std::vector<Vector>> dphi = lagrangeGradientFuncs(refnodes[0], refnodes[1], p);
 
     const std::size_t b = dphi.size();
-    const std::size_t n2 = dphi[0][0].size();
+    //const std::size_t n2 = dphi[0][0].size();
 
     Matrix local(b, Vector(b));
 
@@ -318,9 +318,9 @@ std::vector<std::vector<double>> computeLocalStiff(const int p, const std::array
         for(int j=0; j<b; j++)
         {
             Matrix a = matmul(invBT, dphi[i]);
-            Matrix b = matmul(invBT, dphi[j]);
+            Matrix c = matmul(invBT, dphi[j]);
 
-            Vector u = dot(a, b);
+            Vector u = dot(a, c);
 
             for(int k=0; k<u.size(); k++)
             {
