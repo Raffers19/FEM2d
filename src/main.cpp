@@ -4,6 +4,7 @@
 #include "print.hpp"
 #include "mesh/mesher.hpp"
 #include "assembley/assembler.hpp"
+#include "solvers/solver.hpp"
 
 double func(const double x, const double y)
 {
@@ -24,24 +25,28 @@ int main()
     double maxy = 1;
     //int order = 5;
 
+    //MESH CONSTRUCTION//
     Mesher mesh(Nx, Ny, minx, miny, maxx, maxy);
 
     std::array<std::vector<double>, 2> nodes = mesh.getNodes();
     std::array<std::vector<int>, 3> con = mesh.getConnectivity();
     std::vector<int> bc = mesh.getBoundary();
 
+    //ASSEMBLER//
     Assembler assembler(nodes, con);
 
     Matrix A = assembler.poissonStiffnessP1();
     A = assembler.boundaryDirichletH(A, bc);
 
+    Matrix M = assembler.massP1();
+
     Vector F = assembler.poissonSourceP1(func);
     F = assembler.boundaryDirichletH(F, bc);
 
-    print(A);
-    print(F);
+    //SOLVER//
+    Solver solver{};
 
-
+    Vector U = solver.conjugateGradient(M, F);
 
     return 0;
 }
