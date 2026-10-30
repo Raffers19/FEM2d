@@ -18,6 +18,7 @@ Mesher::Mesher(int xnodes, int ynodes, double lower_x_limit, double lower_y_limi
     std::array<Matrix, 2> V = meshgrid(x, y);
     nodes = gridToNode(V);
     con = constructConnectivity(Nx, Ny);
+    bc = getBoundaryNodes(nodes, minx, maxx, miny, maxy);
 
 }
 
@@ -30,4 +31,8 @@ std::array<std::vector<int>, 3> Mesher::getConnectivity() const
 {
     return con;
 }
-    
+
+std::vector<int> Mesher::getBoundary() const
+{
+    return bc;
+}

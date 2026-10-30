@@ -1,6 +1,7 @@
 #include "mesh/mesh_funcs.hpp"
 #include <vector>
 #include <array>
+#include <cmath>
 #include "core_funcs.hpp"
 
 std::array<std::vector<double>, 2> gridToNode(const std::array<std::vector<std::vector<double>>, 2>& V)
@@ -72,4 +73,26 @@ std::array<std::vector<int>, 3> constructConnectivity(const int Nx, const int Ny
     return con;
 }
 
+std::vector<int> getBoundaryNodes(const std::array<std::vector<double>, 2>& nodes, const double minx, const double maxx, const double miny, const double maxy)
+{
+    const int tn = static_cast<int>(nodes[0].size());
+    const double tol = 1e-12;
 
+    std::vector<int> bc;
+
+    for(int i=0; i<tn; i++)
+    {
+        double x = nodes[0][i];
+        double y = nodes[1][i];
+
+        if (std::abs(x - minx) < tol ||
+            std::abs(x - maxx) < tol ||
+            std::abs(y - miny) < tol ||
+            std::abs(y - maxy) < tol)
+        {
+            bc.push_back(i);
+        }
+    }
+
+    return bc;
+}
