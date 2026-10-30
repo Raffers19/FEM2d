@@ -5,6 +5,8 @@ add_library(fem2d_lib STATIC
     quadrature/quad_funcs.cpp
     quadrature/quad.cpp
     assembley/assembler.cpp
+    solvers/solver.cpp
+    solvers/solver_funcs.cpp
 )
 
 # Make public headers accessible
