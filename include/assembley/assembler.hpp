@@ -1,8 +1,6 @@
 #pragma once
-
 #include <array>
 #include <vector>
-
 #include "quadrature/quad.hpp"
 
 class Assembler
@@ -21,9 +19,13 @@ public:
 
     template<typename Func>
     std::vector<double> poissonSourceP1(Func func);
+
+    std::vector<std::vector<double>> boundaryDirichletH(const std::vector<std::vector<double>>& A, const std::vector<int>& bnodes);
+
+    std::vector<double> boundaryDirichletH(const std::vector<double>& F, const std::vector<int>& bnodes);
+
+
 };
-
-
 template<typename Func>
 std::vector<double> Assembler::poissonSourceP1(Func func)
 {

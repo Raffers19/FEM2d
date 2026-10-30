@@ -52,3 +52,37 @@ std::vector<std::vector<double>> Assembler::poissonStiffnessP1()
     return A;
 
 }
+
+std::vector<std::vector<double>> boundaryDirichletH(const std::vector<std::vector<double>>& A, const std::vector<int>& bnodes)
+{
+    int sizeA = static_cast<int>(A.size());
+    int sizebc = static_cast<int>(bnodes.size());
+    std::vector<std::vector<double>> D = A;
+
+    for (int i=0; i<sizebc; i++)
+    {
+        for(int j=0; j<sizeA; j++)
+        {
+            D[bnodes[i]][j] = 0.0;
+            D[j][bnodes[i]] = 0.0;
+        }
+        D[bnodes[i]][bnodes[i]] = 1.0;
+    }
+
+    return D;
+}
+
+std::vector<double> boundaryDirichletH(const std::vector<double>& F, const std::vector<int>& bnodes)+
+{
+    int sizeA = static_cast<int>(F.size());
+    int sizebc = static_cast<int>(bnodes.size());
+
+    std::vector<double> D = F;
+
+    for (int i=0; i<sizebc; i++)
+    {
+        D[bnodes[i]] = 0.0;
+    }
+
+    return D;
+}
