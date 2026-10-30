@@ -53,6 +53,50 @@ std::vector<std::vector<double>> Assembler::poissonStiffnessP1()
 
 }
 
+std::vector<std::vector<double>> Assembler::massP1()
+{
+    int p = 1;
+    int order = p + 2;
+
+    Quadrature quad(order);
+
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+
+    int tt = static_cast<int>(con[0].size()); 
+    int bn = static_cast<int>(nodes[0].size());
+
+    Matrix M(bn, Vector(bn));
+
+    for (int n = 0; n < tt; n++)
+    {
+        const std::array<int, 3> tcon{con[0][n], con[1][n], con[2][n]};
+
+        const double x1 = nodes[0][tcon[0]];
+        const double x2 = nodes[0][tcon[1]];
+        const double x3 = nodes[0][tcon[2]];
+        const double y1 = nodes[1][tcon[0]];
+        const double y2 = nodes[1][tcon[1]];
+        const double y3 = nodes[1][tcon[2]];
+
+        const Matrix m = quad.getLocalMass(x1, x2, x3, y1, y2, y3, p);
+
+        const std::array<int, 3> dof{tcon[1], tcon[0], tcon[2]};
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                M[dof[i]][dof[j]] += m[i][j];
+            }
+        }
+    }
+
+    return M;
+
+}
+
 std::vector<std::vector<double>> Assembler::boundaryDirichletH(const std::vector<std::vector<double>>& A, const std::vector<int>& bnodes)
 {
     int sizeA = static_cast<int>(A.size());

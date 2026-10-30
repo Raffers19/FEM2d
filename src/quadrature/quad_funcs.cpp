@@ -337,3 +337,35 @@ std::vector<std::vector<double>> computeLocalStiff(const int p, const std::array
 
 }
 
+std::vector<std::vector<double>> computeLocalMass(const int p, const std::array<std::vector<double>, 2>& refnodes, const std::vector<double>& refweights, 
+    const double x1, const double x2, const double x3, const double y1, const double y2, const double y3)
+{
+    using Vector = std::vector<double>;
+    using Matrix = std::vector<Vector>;
+
+    Matrix B = transformMatrix(x1, x2, x3, y1, y2, y3);
+    double det = std::abs(determinant(B));
+
+    Matrix phi = lagrangeBasisFuncs(refnodes[0], refnodes[1], p);
+    int n2 = static_cast<int>(refnodes[0].size());
+    int b = static_cast<int>(phi.size());
+
+    Matrix local(b, Vector(b));
+
+    for(int i=0; i<b; i++)
+    {
+        for(int j=0; j<b; j++)
+        {
+            Vector u(n2);
+            for(int k=0; k<n2; k++)
+            {
+                u[k] = phi[i][k]*phi[j][k]*refweights[k]*det;
+            }
+
+            local[i][j] = sum(u);
+        }
+    }
+
+    return local;
+
+}

@@ -13,7 +13,10 @@ private:
 
 public:
     Quadrature(int quadOrder);
+
     std::vector<std::vector<double>> getLocalStiff(double x1,double x2,double x3,double y1,double y2,double y3, int p) const;
+
+    std::vector<std::vector<double>> getLocalMass(double x1,double x2,double x3,double y1,double y2,double y3, int p) const;
 
     template<typename Func>
     std::vector<double> getLocalSource(Func func, double x1,double x2,double x3,double y1,double y2,double y3, int p) const;

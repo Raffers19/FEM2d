@@ -24,6 +24,8 @@ public:
 
     std::vector<double> boundaryDirichletH(const std::vector<double>& F, const std::vector<int>& bnodes);
 
+    std::vector<std::vector<double>> massP1();
+
 
 };
 template<typename Func>

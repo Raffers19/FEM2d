@@ -23,6 +23,10 @@ std::vector<std::vector<double>> Quadrature::getLocalStiff(double x1,double x2,d
     return L;
 }
 
-
+std::vector<std::vector<double>> Quadrature::getLocalMass(double x1,double x2,double x3,double y1,double y2,double y3, int p) const
+{
+    std::vector<std::vector<double>> M = computeLocalMass(p, refNodes, refWeights, x1, x2, x3, y1, y2, y3);
+    return M;
+}
 
 

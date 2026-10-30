@@ -35,10 +35,12 @@ int main()
     Matrix A = assembler.poissonStiffnessP1();
     A = assembler.boundaryDirichletH(A, bc);
 
+    Vector F = assembler.poissonSourceP1(func);
+    F = assembler.boundaryDirichletH(F, bc);
 
-    //print(bc);
+    print(A);
+    print(F);
 
-    
 
 
     return 0;
