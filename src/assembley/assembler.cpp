@@ -38,7 +38,6 @@ std::vector<std::vector<double>> Assembler::poissonStiffnessP1()
 
         const Matrix L = quad.getLocalStiff(x1, x2, x3, y1, y2, y3, p);
 
-        // Your local basis is ordered by vertices 2, 1, 3.
         const std::array<int, 3> dof{tcon[1], tcon[0], tcon[2]};
 
         for (int i = 0; i < 3; i++)
@@ -51,6 +50,5 @@ std::vector<std::vector<double>> Assembler::poissonStiffnessP1()
     }
 
     return A;
-
 
 }
