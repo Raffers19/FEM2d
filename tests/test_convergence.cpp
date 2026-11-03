@@ -9,7 +9,6 @@
 #include "solvers/solver.hpp"
 #include "core_funcs.hpp"
 
-// Exact solution
 double efunc(double x, double y)
 {
     const double pi = std::numbers::pi;
@@ -17,7 +16,6 @@ double efunc(double x, double y)
     return std::sin(pi * x) * std::sin(pi * y);
 }
 
-// Poisson source: -Laplacian(u)
 double func(double x, double y)
 {
     const double pi = std::numbers::pi;
@@ -46,6 +44,7 @@ int main()
     for(int n=0; n<Nt; n++)
     {
         int Nn = static_cast<int>(N[n]);
+        
         //MESH CONSTRUCTION//
         Mesher mesh(Nn, Nn, minx, miny, maxx, maxy);
 
