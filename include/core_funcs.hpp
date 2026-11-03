@@ -421,3 +421,90 @@ inline double triArea(double x1, double x2, double x3, double y1, double y2, dou
 {
     return 0.5 * std::abs((x1 - x3)*(y2 - y3) - (x2 - x3)*(y1 - y3));
 }
+
+inline std::vector<double> addVec(const std::vector<double>& x, const std::vector<double>& y)
+{
+    int n = static_cast<int>(x.size());
+
+    std::vector<double> z(n);
+    
+    for(int i=0; i<n; i++)
+    {
+        z[i] = x[i] + y[i];
+    }
+    return z;
+}
+
+inline std::vector<double> minusVec(const std::vector<double>& x, const std::vector<double>& y)
+{
+    int n = static_cast<int>(x.size());
+
+    std::vector<double> z(n);
+    
+    for(int i=0; i<n; i++)
+    {
+        z[i] = x[i] - y[i];
+    }
+    return z;
+}
+
+inline std::vector<double> minusVecAbs(const std::vector<double>& x, const std::vector<double>& y)
+{
+    int n = static_cast<int>(x.size());
+
+    std::vector<double> z(n);
+    
+    for(int i=0; i<n; i++)
+    {
+        z[i] = std::abs(x[i] - y[i]);
+    }
+    return z;
+}
+
+inline std::vector<double> logVec(const std::vector<double>& x)
+{
+    int n = static_cast<int>(x.size());
+
+    std::vector<double> z(n);
+    
+    for(int i=0; i<n; i++)
+    {
+        z[i] = std::log(x[i]);
+    }
+    return z;
+}
+
+inline double linearRegression(const std::vector<double>& x, const std::vector<double>& y)
+{
+    if (x.size() != y.size() || x.size() < 2)
+        throw std::invalid_argument("Invalid vector sizes");
+
+    double meanx = 0.0;
+    double meany = 0.0;
+
+    for (std::size_t i = 0; i < x.size(); ++i)
+    {
+        meanx += x[i];
+        meany += y[i];
+    }
+
+    meanx /= x.size();
+    meany /= y.size();
+
+    double numerator = 0.0;
+    double denominator = 0.0;
+
+    for (std::size_t i = 0; i < x.size(); ++i)
+    {
+        double dx = x[i] - meanx;
+        double dy = y[i] - meany;
+
+        numerator += dx * dy;
+        denominator += dx * dx;
+    }
+
+    if (denominator == 0.0)
+        throw std::invalid_argument("All x values are identical");
+
+    return numerator / denominator;
+}

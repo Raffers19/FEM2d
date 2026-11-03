@@ -1,14 +1,29 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <numbers>
 #include "print.hpp"
 #include "mesh/mesher.hpp"
 #include "assembley/assembler.hpp"
 #include "solvers/solver.hpp"
+#include "core_funcs.hpp"
 
-double func(const double x, const double y)
+// Exact solution
+double efunc(double x, double y)
 {
-    return x*x + y*y - 0.4*0.4;
+    const double pi = std::numbers::pi;
+
+    return std::sin(pi * x) * std::sin(pi * y);
+}
+
+// Poisson source: -Laplacian(u)
+double func(double x, double y)
+{
+    const double pi = std::numbers::pi;
+
+    return 2.0 * pi * pi
+         * std::sin(pi * x)
+         * std::sin(pi * y);
 }
 
 int main()
@@ -17,36 +32,66 @@ int main()
     using Vector = std::vector<double>;
     using Matrix = std::vector<Vector>;
 
-    int Nx = 3;
-    int Ny = 3;
     double minx = -1;
     double maxx = 1;
     double miny = -1;
     double maxy = 1;
-    //int order = 5;
+    
+    std::vector<double> N{9, 17, 21, 33};
 
-    //MESH CONSTRUCTION//
-    Mesher mesh(Nx, Ny, minx, miny, maxx, maxy);
+    int Nt = static_cast<int>(N.size());
+    Vector error(Nt);
 
-    std::array<std::vector<double>, 2> nodes = mesh.getNodes();
-    std::array<std::vector<int>, 3> con = mesh.getConnectivity();
-    std::vector<int> bc = mesh.getBoundary();
+    for(int n=0; n<Nt; n++)
+    {
+        int Nn = static_cast<int>(N[n]);
+        //MESH CONSTRUCTION//
+        Mesher mesh(Nn, Nn, minx, miny, maxx, maxy);
 
-    //ASSEMBLER//
-    Assembler assembler(nodes, con);
+        std::array<std::vector<double>, 2> nodes = mesh.getNodes();
+        std::array<std::vector<int>, 3> con = mesh.getConnectivity();
+        std::vector<int> bc = mesh.getBoundary();
 
-    Matrix A = assembler.poissonStiffnessP1();
-    A = assembler.boundaryDirichletH(A, bc);
+        //ASSEMBLER//
+        Assembler assembler(nodes, con);
 
-    Matrix M = assembler.massP1();
+        Matrix A = assembler.poissonStiffnessP1();
+        A = assembler.boundaryDirichletH(A, bc);
 
-    Vector F = assembler.poissonSourceP1(func);
-    F = assembler.boundaryDirichletH(F, bc);
+        Matrix M = assembler.massP1();
 
-    //SOLVER//
-    Solver solver{};
+        Vector F = assembler.poissonSourceP1(func);
+        F = assembler.boundaryDirichletH(F, bc);
 
-    Vector U = solver.conjugateGradient(M, F);
+        Vector Fe = assembler.poissonSourceP1(efunc);
+
+        //SOLVER//
+        Solver solver{};
+
+        Vector U = solver.conjugateGradient(A, F);
+        Vector Ue = solver.conjugateGradient(M, Fe);
+
+        Vector Udif = minusVec(U, Ue);
+        Vector MUdif = matmul(M, Udif);
+
+        error[n] = std::sqrt(dot(Udif, MUdif));
+
+        std::cout << "N = " << N[n]
+          << ", Error = " << error[n]
+          << '\n';
+
+    }
+
+    Vector h(Nt);
+
+    for (int n = 0; n < Nt; ++n)
+    {
+        h[n] = (maxx - minx) / (N[n] - 1.0);
+    }
+
+    double grad = linearRegression(logVec(h), logVec(error));
+
+    print(grad);
 
     return 0;
 }

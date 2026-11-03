@@ -22,6 +22,17 @@ add_test(
     COMMAND test_mesh
 )
 
+# Mesh test
+add_executable(test_convergence
+    test_convergence.cpp
+)
+
+target_link_libraries(test_convergence PRIVATE fem2d_lib)
+
+add_test(
+    NAME Convergence
+    COMMAND test_convergence
+)
 
 
 
