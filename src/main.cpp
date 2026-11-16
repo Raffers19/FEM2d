@@ -7,6 +7,8 @@
 #include "assembley/assembler.hpp"
 #include "solvers/solver.hpp"
 #include "core_funcs.hpp"
+#include <Eigen/Sparse>
+
 
 // Exact solution
 double efunc(double x, double y)
@@ -26,7 +28,7 @@ double func(double x, double y)
          * std::sin(pi * y);
 }
 
-int main()
+/*int main()
 {
     
     using Vector = std::vector<double>;
@@ -92,6 +94,20 @@ int main()
     double grad = linearRegression(logVec(h), logVec(error));
 
     print(grad);
+
+    return 0;
+}*/
+
+
+
+int main()
+{
+    Eigen::SparseMatrix<double> A(100, 100);
+
+    std::cout << "Eigen works!\n";
+    std::cout << "Matrix dimensions: "
+              << A.rows() << " x "
+              << A.cols() << '\n';
 
     return 0;
 }
